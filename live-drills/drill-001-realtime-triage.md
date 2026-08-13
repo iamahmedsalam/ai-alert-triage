@@ -25,6 +25,7 @@ Three terminals running concurrently: Project 3's enrichment engine, Project 4's
 ```bash
 hydra -l fakeuser -P /tmp/small_wordlist.txt -t 8 ssh://192.168.56.104
 ```
+![Live Hydra SSH brute force attack from Kali against Ubuntu SOC Agent](../screenshots/drill-001/drill1-02-hydra-attack.png)
 
 Rule 100011 fired correctly (confirmed via Wazuh alerts). Project 3's engine picked it up within 3 seconds:
 
