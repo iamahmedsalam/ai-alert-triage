@@ -53,7 +53,7 @@ disguised as encrypted web traffic, and the "REVIEW" verdict combined
 with all 3 sources responding suggests the enrichment process
 completed but returned ambiguous results, requiring human judgment.
 ```
-
+![Terminal output showing AI verdict and reasoning on an ambiguous REVIEW-tier alert](../screenshots/drill-002/drill2-01-ambiguous-verdict-reasoning.png)
 ---
 
 ## What This Demonstrates
