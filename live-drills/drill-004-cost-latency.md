@@ -58,6 +58,8 @@ Estimated monthly cost at 100 alerts/day: $14.74
 
 *(Pricing basis: Claude Sonnet 5 at $3/M input tokens, $15/M output tokens.)*
 
+![Latency and cost measurement output across 3 alert types](../screenshots/drill-004/drill4-01-latency-cost-metrics.png)
+
 ---
 
 ## Interpretation
