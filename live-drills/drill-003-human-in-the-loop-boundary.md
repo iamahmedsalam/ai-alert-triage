@@ -47,6 +47,7 @@ DROP       0    --  45.148.10.151        0.0.0.0/0
 ```
 
 Confirmed — Project 3's deterministic verdict resulted in a real firewall rule.
+![Project 3 BLOCK verdict and confirmed iptables DROP rule](../screenshots/drill-003/drill3-01-block-and-iptables-confirmed.png)
 
 ## Step 3 — The Key Proof: Codebase Inspection
 
@@ -55,7 +56,7 @@ $ cd ~/ai-triage-engine
 $ grep -rn "iptables\|subprocess" src/
 (no output)
 ```
-![Project 3 BLOCK verdict and confirmed iptables DROP rule](../screenshots/drill-003/drill3-01-block-and-iptables-confirmed.png)
+![grep against Project 4's entire codebase returning zero iptables/subprocess matches](../screenshots/drill-003/drill3-02-no-containment-capability-grep.png)
 
 **Zero matches across the entire `src/` directory.** Every file in Project 4's codebase — `config.py`, `logger.py`, `triage_engine.py`, `prompt_builder.py`, `response_parser.py`, `main.py`, and `clients/anthropic_client.py` — was searched. None contain any reference to `iptables` or `subprocess`.
 
