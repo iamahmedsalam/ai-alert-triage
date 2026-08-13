@@ -1,0 +1,57 @@
+<!--
+  AI Triage Rules (100017-100020)
+  Project 4 - AI-Augmented Alert Triage
+
+  These rules act on JSON output written by the AI triage engine
+  (ai-triage-engine/src/main.py -> write_ai_triage_alert()) to
+  /home/wazuhuser/ai-triage-engine/logs/ai_triage_alerts.json,
+  registered as a Wazuh <localfile> source.
+
+  Rule 100017 is the base rule - fires on any AI triage result.
+  Rules 100018-100020 chain off it via if_sid, escalating severity
+  based on the AI's verdict.
+
+  NOTE ON FIELD NAMING: the output field is "triage_source_ip", not
+  "enrichment_ip". This was a deliberate fix - the field was
+  originally named "enrichment_ip", which collided with Project 3's
+  Rule 100012 (which matches on ANY JSON log containing that field
+  name, regardless of source file). Project 3's rule was claiming
+  these alerts before Rule 100017 ever got evaluated. Renamed to
+  eliminate the collision between two independently-built rule sets.
+  See docs/lessons-learned.md for the full story.
+
+  Custom rule count after Project 3: 16 (100001-100016)
+  Custom rule count after Project 4: 20 (100001-100020)
+-->
+
+<group name="ai_triage,">
+
+  <rule id="100017" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="ai_verdict">\.+</field>
+    <description>AI triage result received</description>
+    <group>ai_triage,</group>
+  </rule>
+
+  <rule id="100018" level="6">
+    <if_sid>100017</if_sid>
+    <field name="ai_verdict">NEEDS_INVESTIGATION</field>
+    <description>AI Triage: NEEDS INVESTIGATION - $(recommended_action)</description>
+    <group>ai_triage,needs_investigation,</group>
+  </rule>
+
+  <rule id="100019" level="4">
+    <if_sid>100017</if_sid>
+    <field name="ai_verdict">FALSE_POSITIVE</field>
+    <description>AI Triage: Likely FALSE POSITIVE - $(recommended_action)</description>
+    <group>ai_triage,false_positive,</group>
+  </rule>
+
+  <rule id="100020" level="12">
+    <if_sid>100017</if_sid>
+    <field name="ai_verdict">TRUE_POSITIVE</field>
+    <description>AI Triage: TRUE POSITIVE confirmed - $(recommended_action)</description>
+    <group>ai_triage,true_positive,critical,</group>
+  </rule>
+
+</group>
