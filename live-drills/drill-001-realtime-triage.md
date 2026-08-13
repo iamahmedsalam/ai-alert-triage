@@ -32,6 +32,7 @@ Rule 100011 fired correctly (confirmed via Wazuh alerts). Project 3's engine pic
 ```
 2026-08-13 07:42:28,056  INFO  Skipping private IP: 192.168.56.50 (rule 100011)
 ```
+![Enrichment engine log showing correct private-IP filtering](../screenshots/drill-001/drill1-01-enrichment-log-private-skip.png)
 
 ---
 
