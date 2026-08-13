@@ -1,0 +1,14 @@
+anthropic:
+  api_key: "YOUR_ANTHROPIC_KEY_HERE"
+  model: "claude-sonnet-5"
+  max_tokens: 1024
+
+thresholds:
+  min_rule_level_for_ai_triage: 10
+
+alerts:
+  watch_file: "/var/ossec/logs/alerts/alerts.json"
+
+logging:
+  file: "/home/wazuhuser/ai-triage-engine/logs/triage.log"
+  level: "INFO"
