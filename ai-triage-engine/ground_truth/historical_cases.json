@@ -1,0 +1,74 @@
+[
+  {
+    "case_id": "hist-001",
+    "source": "Project 1 - IR-001",
+    "alert": {
+      "rule": {"id": "100001", "level": 10, "description": "Suspicious PowerShell: Encoded command detected - possible malware execution (T1059.001)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAA..."
+    },
+    "enrichment": null,
+    "human_verdict": "TRUE_POSITIVE",
+    "human_reasoning": "Rule fired correctly on real encoded PowerShell execution. Payload decoded to benign Write-Host test string, but detection logic itself was accurate and would catch a real malicious payload identically."
+  },
+  {
+    "case_id": "hist-002",
+    "source": "Project 2 - Drill 002 SSH Brute Force",
+    "alert": {
+      "rule": {"id": "100011", "level": 12, "description": "CRITICAL: SSH brute force attack confirmed - repeated failed login attempts from same source IP (T1110.001)"},
+      "agent": {"name": "ubuntu-soc-agent"},
+      "full_log": "Failed password for invalid user fakeuser from 192.168.56.50 port 37752 ssh2"
+    },
+    "enrichment": {
+      "verdict": "CLEAN",
+      "sources_responding": 3,
+      "summary": {"abuse_score": 0, "otx_pulses": 0, "misp_matched": false}
+    },
+    "human_verdict": "TRUE_POSITIVE",
+    "human_reasoning": "Real Hydra brute force confirmed via 25 failed attempts, no successful login, system not compromised. Attack itself is a true positive even though source IP had no external reputation history (internal lab IP)."
+  },
+  {
+    "case_id": "hist-003",
+    "source": "Project 2 - Drill 005 Malware Dropper",
+    "alert": {
+      "rule": {"id": "100008", "level": 10, "description": "Executable or script dropped in Temp/AppData folder - possible malware staging (T1105)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "certutil -encode payload staged as update-service.exe in Temp"
+    },
+    "enrichment": null,
+    "human_verdict": "TRUE_POSITIVE",
+    "human_reasoning": "LOLBIN (certutil) used to stage disguised executable in Temp directory. File caught before execution and quarantined. Classic malware staging pattern regardless of payload content."
+  },
+  {
+    "case_id": "hist-004",
+    "source": "Project 3 - Drill 3 C2 Callback",
+    "alert": {
+      "rule": {"id": "92050", "level": 10, "description": "Simulated: Suspicious outbound network connection detected (C2 callback pattern)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "Outbound connection to 45.148.10.151"
+    },
+    "enrichment": {
+      "verdict": "BLOCK",
+      "sources_responding": 3,
+      "summary": {"abuse_score": 100, "otx_pulses": 50, "misp_matched": false}
+    },
+    "human_verdict": "TRUE_POSITIVE",
+    "human_reasoning": "Live, currently-active malicious IP (100/100 AbuseIPDB, 50 OTX pulses) confirmed as C2 infrastructure. Multi-source correlation strongly supports containment."
+  },
+  {
+    "case_id": "hist-005",
+    "source": "Project 3 - Drill 1 enrichment finding",
+    "alert": {
+      "rule": {"id": "100011", "level": 12, "description": "CRITICAL: SSH brute force attack confirmed - repeated failed login attempts from same source IP (T1110.001)"},
+      "agent": {"name": "ubuntu-soc-agent"},
+      "full_log": "Failed password for invalid user fakeuser from 192.168.56.50 port 33546"
+    },
+    "enrichment": {
+      "verdict": "CLEAN",
+      "sources_responding": 0,
+      "summary": {"abuse_score": 0, "otx_pulses": 0, "misp_matched": false}
+    },
+    "human_verdict": "TRUE_POSITIVE",
+    "human_reasoning": "REVISED during Phase D accuracy testing: originally labeled NEEDS_INVESTIGATION based on the private IP / skipped enrichment. However, comparison against hist-002 (functionally identical scenario: Rule 100011, confirmed frequency-based brute-force pattern, private-IP source) exposed an inconsistency in the original labeling. Rule 100011 only fires after crossing a confirmed frequency threshold, meaning the attack behavior itself is already validated independent of external threat-intel reputation. Corrected to TRUE_POSITIVE for consistency with hist-002 and with Project 2's actual documented Drill 002 finding. The AI's original TRUE_POSITIVE call on this case was correct; the ground-truth label was the error."
+  }
+]

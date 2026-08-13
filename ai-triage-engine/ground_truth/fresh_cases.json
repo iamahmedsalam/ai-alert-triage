@@ -1,0 +1,74 @@
+[
+  {
+    "case_id": "fresh-001",
+    "source": "Project 4 - constructed false positive",
+    "alert": {
+      "rule": {"id": "100011", "level": 12, "description": "CRITICAL: SSH brute force attack confirmed - repeated failed login attempts from same source IP (T1110.001)"},
+      "agent": {"name": "ubuntu-soc-agent"},
+      "full_log": "Failed password for invalid user backup-svc from 192.168.56.101 port 22 ssh2 (12 attempts in 90s, source is the Wazuh Manager's own scheduled backup script using an outdated credential after a recent password rotation)"
+    },
+    "enrichment": {
+      "verdict": "CLEAN",
+      "sources_responding": 0,
+      "summary": {"abuse_score": 0, "otx_pulses": 0, "misp_matched": false}
+    },
+    "human_verdict": "FALSE_POSITIVE",
+    "human_reasoning": "Source is an internal, known automation host (the Wazuh Manager itself) whose backup script has an outdated credential following a password rotation. This is a misconfiguration, not an attack - the fix is updating the stored credential, not incident response."
+  },
+  {
+    "case_id": "fresh-002",
+    "source": "Project 4 - constructed false positive",
+    "alert": {
+      "rule": {"id": "100008", "level": 10, "description": "Executable or script dropped in Temp/AppData folder - possible malware staging (T1105)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "File created: C:\\Users\\Jackal\\AppData\\Local\\Temp\\__PSScriptPolicyTest_a1b2c3.ps1 by powershell.exe during a scheduled Windows Update compliance script authored by IT (verified in change management ticket CHG-4471)"
+    },
+    "enrichment": null,
+    "human_verdict": "FALSE_POSITIVE",
+    "human_reasoning": "This is the well-documented PowerShell Script Policy Test artifact (same pattern identified in Project 2's Detection Improvements log) triggered by a legitimate, pre-approved IT automation script, not attacker-staged malware."
+  },
+  {
+    "case_id": "fresh-003",
+    "source": "Project 4 - constructed ambiguous case",
+    "alert": {
+      "rule": {"id": "100001", "level": 10, "description": "Suspicious PowerShell: Encoded command detected - possible malware execution (T1059.001)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "powershell.exe -EncodedCommand [base64 payload not yet decoded] executed by user Jackal at 2:47 AM local time, no prior login session recorded in the last 6 hours"
+    },
+    "enrichment": null,
+    "human_verdict": "NEEDS_INVESTIGATION",
+    "human_reasoning": "Encoded PowerShell alone isn't conclusive, but the off-hours execution timing (2:47 AM) with no preceding login session is a genuine anomaly worth escalating. Requires payload decoding and account activity review before disposition - insufficient evidence yet for a confident TRUE or FALSE positive call."
+  },
+  {
+    "case_id": "fresh-004",
+    "source": "Project 4 - constructed ambiguous case",
+    "alert": {
+      "rule": {"id": "92050", "level": 10, "description": "Simulated: Suspicious outbound network connection detected (C2 callback pattern)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "Outbound connection to 178.62.193.44 on port 443"
+    },
+    "enrichment": {
+      "verdict": "REVIEW",
+      "sources_responding": 3,
+      "summary": {"abuse_score": 62, "otx_pulses": 0, "misp_matched": false}
+    },
+    "human_verdict": "NEEDS_INVESTIGATION",
+    "human_reasoning": "Moderate AbuseIPDB score (62/100) with zero corroboration from OTX or MISP is a genuinely mixed signal - not clean enough to dismiss, not corroborated enough for confident containment. This is exactly the kind of case Project 3's verdict logic was designed to flag for human review rather than auto-block."
+  },
+  {
+    "case_id": "fresh-005",
+    "source": "Project 4 - constructed true positive",
+    "alert": {
+      "rule": {"id": "100004", "level": 10, "description": "Registry persistence detected - Run key modification (T1547.001)"},
+      "agent": {"name": "WIN11-SOC-Endpoint"},
+      "full_log": "reg.exe added HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\WinSvcHelper pointing to C:\\Users\\Public\\update.exe, file hash matches known Cobalt Strike beacon loader per internal hash database"
+    },
+    "enrichment": {
+      "verdict": "BLOCK",
+      "sources_responding": 3,
+      "summary": {"abuse_score": 0, "otx_pulses": 45, "misp_matched": true}
+    },
+    "human_verdict": "TRUE_POSITIVE",
+    "human_reasoning": "Registry persistence pointing to a Public-writable directory, combined with a file hash independently attributed to a known offensive-security tool (Cobalt Strike) via both OTX and MISP. This is unambiguous - persistence + malicious hash attribution together leave no reasonable doubt."
+  }
+]
